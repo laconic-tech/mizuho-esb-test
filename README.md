@@ -208,7 +208,7 @@ If the steps above are successful, then you can reach the price server at http:/
 the broker management site is also available at http://localhost:8161/ 
 
 * username: admin 
-* password: admin.
+* password: admin
 
 If the ports are in use in your system you can modify the mappings in `docker-compose.yml`
 
