@@ -1,0 +1,56 @@
+@startuml
+scale 1
+hide empty methods
+hide empty members
+
+together {
+    class PriceEvent << POJO >> {
+        String vendorId
+        String instrumentId
+        Double bid
+        Double ask
+        Instant timestamp
+    }
+
+    class Price << domain class >> {
+        String vendorId
+        String instrumentId
+        Double bid
+        Double ask
+        Instant timestamp
+
+        {static} fromEvent(PriceEvent e)
+    }
+}
+Price - PriceEvent: created from >
+
+class EmbeddedPriceStore << Bean >> {
+    Stream[Price] getByInstrument(String instrument)
+    Stream[Price] getByVendor(String vendor)
+
+    void append(Price price)
+    void evict()
+}
+
+EmbeddedPriceStore -() PriceStore
+EmbeddedPriceStore o-- Price: has many
+
+class InboundPricesRoute << Route definition >> {
+    PriceStore store
+
+    void process(PriceEvent e)
+}
+
+InboundPricesRoute *-> EmbeddedPriceStore
+InboundPricesRoute -- PriceEvent
+
+class PricesController << Controller >> {
+    PriceStore store
+
+    << endpoint >> Flux[Price] getByInstrumentId(String vendor)
+    << endpoint >> Flux[Price] getByVendorId(String vendor)
+
+}
+
+PricesController *--> EmbeddedPriceStore
+@enduml

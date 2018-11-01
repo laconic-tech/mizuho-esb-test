@@ -1,0 +1,14 @@
+@startuml
+actor Consumer
+
+
+box "Price Server"
+Consumer -> PricesController: GET /prices/instruments/AMZN
+activate PricesController
+PricesController -> PriceStore :getByInstrumentId(instrument)
+PriceStore --> PricesController: Stream[Price]
+PricesController -> Consumer: 200 OK, Body: Price[...]
+deactivate PricesController
+
+end box
+@enduml

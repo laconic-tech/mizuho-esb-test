@@ -1,0 +1,21 @@
+@startuml
+
+actor "vendor::transformer" as vendor
+boundary prices
+== new price ==
+vendor -> prices: produce(price)
+box "Price Server"
+prices -> Processor: price
+activate Processor
+Processor -> PriceStore: append(price)
+PriceStore --> Processor
+deactivate Processor
+
+== eviction ==
+Timer -> PriceStore: evict()
+activate Timer
+PriceStore --> Timer
+deactivate Timer
+end box
+
+@enduml

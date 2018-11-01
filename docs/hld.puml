@@ -1,0 +1,37 @@
+@startuml
+
+interface "jms:queue:prices" as prices
+
+
+interface "jms:queue:bloomberg" as bloomberg_in
+interface "jms:queue:reuters"   as reuters_in
+
+package "Vendors" {
+
+    package "Bloomberg" {
+        bloomberg_in --> ["Bloomberg Transformer"]
+        ["Bloomberg Transformer"] --> prices
+    }
+
+    package "Reuters" {
+        reuters_in --> ["Reuters Transformer"]
+        ["Reuters Transformer"] --> prices
+
+    }
+}
+
+package "Price Server" {
+    interface "http" as http
+    interface "jms:queue:deadletters" as deadletters
+
+    prices --> [PriceServer]
+    [PriceServer] -> deadletters
+    [PriceServer] --> http
+
+}
+
+package "Consumers" {
+    http --> ["Consumer 1"]
+}
+
+@enduml

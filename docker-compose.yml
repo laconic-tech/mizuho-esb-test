@@ -1,0 +1,19 @@
+version: '3'
+services:
+  activemq:
+    image: webcenter/activemq:5.14.3
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+      - "61613:61613"
+    environment:
+      ACTIVEMQ_CONFIG_NAME: activemq
+
+  price-server:
+    build: .
+    depends_on:
+      - activemq
+    ports:
+      - "8080:8080"
+    environment:
+      activemq.broker.url: tcp://activemq:61616
